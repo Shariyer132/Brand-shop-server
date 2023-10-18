@@ -24,11 +24,13 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-    const database = client.db("insertDB").collection("haiku");
+    const productCollection = client.db("productsDB").collection("products");
 
-    app.post('/users', (req, res)=>{
-        const users = req.body;
-        console.log(users); 
+    app.post('/products', async(req, res)=>{
+        const product = req.body;
+        console.log(product); 
+        const result = await productCollection.insertOne(product);
+        res.send(result);
     })
 
     // Send a ping to confirm a successful connection
@@ -40,8 +42,6 @@ async function run() {
   }
 }
 run().catch(console.dir);
-
-
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
