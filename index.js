@@ -34,13 +34,7 @@ async function run() {
     app.get('/products', async(req, res)=>{
       const cursor = productCollection.find();
       const result = await cursor.toArray();
-      res.send(result)
-      // const brandName = req.params.brandName;
-      // console.log('from backend',brandName);
-      // const query = {brandName: brandName};
-      // const result = await productCollection.find(query);
-      // res.send(result)
-      
+      res.send(result) 
     })
 
     app.post('/products', async(req, res)=>{
@@ -59,6 +53,14 @@ async function run() {
     app.post('/cartProducts', async(req, res)=>{
       const prodect = req.body;
       const result = await cartProducts.insertOne(prodect)
+      res.send(result)
+    })
+
+    app.delete('/cartProducts/:id', async(req, res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const result = await cartProducts.deleteOne(query);
+      console.log(result, id, query);
       res.send(result)
     })
 
