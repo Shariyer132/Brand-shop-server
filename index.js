@@ -31,26 +31,40 @@ async function run() {
     const productCollection = client.db("productsDB").collection("products");
     const cartProducts = client.db("cartProductDB").collection("cartProduct");
 
-    app.get('/products', async(req, res)=>{
+    app.get('/products', async (req, res) => {
       const cursor = productCollection.find();
       const result = await cursor.toArray();
-      res.send(result) 
+      res.send(result)
     })
 
-    app.post('/products', async(req, res)=>{
-        const product = req.body;
-        console.log(product); 
-        const result = await productCollection.insertOne(product);
-        res.send(result);
+    app.post('/products', async (req, res) => {
+      const product = req.body;
+      console.log(product);
+      const result = await productCollection.insertOne(product);
+      res.send(result);
     })
 
-    app.get('/cartProducts', async(req, res)=>{
+    app.get('/products/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await productCollection.findOne(query);
+      res.send(result)
+    })
+
+    app.get('/cartProducts', async (req, res) => {
       const cursor = cartProducts.find();
       const result = await cursor.toArray();
       res.send(result)
     })
 
-    app.post('/cartProducts', async(req, res)=>{
+    app.get('/cartProducts/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await cartProducts.findOne(query);
+      res.send(result)
+    })
+
+    app.post('/cartProducts', async (req, res) => {
       const prodect = req.body;
       const result = await cartProducts.insertOne(prodect)
       res.send(result)
@@ -60,17 +74,9 @@ async function run() {
       const id = req.params.id;
       const query = {_id: new ObjectId(id)};
       const result = await cartProducts.deleteOne(query);
-      console.log(result, id, query);
+      console.log(id, query, result);
       res.send(result)
     })
-
-    app.get('/products/:id', async(req, res)=>{
-      const id = req.params.id;
-      const query = {_id: new ObjectId(id)};
-      const result = await productCollection.findOne(query);
-      res.send(result)
-    })
-
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });//need to comment in
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
